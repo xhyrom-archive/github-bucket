@@ -1,5 +1,5 @@
 {
-  "name": "Github-Bucket",
+  "name": "github-bucket",
   "version": "1.0.0",
   "private": true,
   "description": "Github's Bot in bucket :D",
@@ -14,10 +14,12 @@
   "scripts": {
     "build": "tsc",
     "start": "probot run ./lib/index.js",
+    "dev": "npm run build && npm run start",
     "test": "jest"
   },
   "dependencies": {
-    "probot": "^11.0.1"
+    "probot": "^11.0.1",
+    "probot-commands": "^1.1.0"
   },
   "devDependencies": {
     "@types/jest": "^26.0.19",

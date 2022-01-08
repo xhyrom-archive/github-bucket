@@ -1,5 +1,5 @@
 # Github-Bucket
-a
+
 > A GitHub App built with [Probot](https://github.com/probot/probot) that Github&#x27;s Bot in bucket :D
 
 ## Setup

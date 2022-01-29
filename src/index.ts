@@ -2,6 +2,8 @@
 import { Probot } from 'probot';
 //import command from './structures/Command';
 
+const verified = new Set([56601352, 68066476]);
+
 export default (app: Probot) => {
   app.on(['issues.opened'], (context) => {
     const user = context.payload.sender.login;
@@ -33,6 +35,46 @@ export default (app: Probot) => {
 
   app.on(['pull_request.opened','pull_request.reopened'], (context) => {
     context.octokit.pulls.requestReviewers(context.pullRequest({ reviewers: ['xHyroM'] })).catch(e => e);
+  })
+
+  app.on(['issue_comment.created'], async (context) => {
+		type IssueWithPullRequestPayload = typeof context.payload.issue & {
+			pull_request: Record<PropertyKey, unknown> | undefined;
+		};
+
+    if (context.isBot) {
+			return;
+		}
+
+    if (context.payload.action === 'created' && (context.payload.issue as IssueWithPullRequestPayload).pull_request && verified.has(context.payload.sender.id)) {
+      const content = context.payload.comment.body.toLowerCase();
+      const fulldata = await context.octokit.pulls.get(context.pullRequest());
+
+      if (content === '@garlic-team pack' && fulldata.data.head.repo) {
+				await context.octokit.actions.createWorkflowDispatch({
+					workflow_id: 'next-release.yml',
+					owner: context.payload.repository.owner.name ?? 'Garlic-Team',
+					repo: context.payload.repository.name,
+					ref: 'next',
+					inputs: {
+						prNumber: context.payload.issue.number.toString(),
+						ref: fulldata.data.head.ref
+					}
+				});
+
+				const replyMessage = context.issue({
+					body: [
+						`Hey @${context.payload.sender.login}, I've started workflow for the build.`,
+						`You can see it [here](https://github.com/${context.payload.repository.full_name}/actions/workflows/next-release.yml)!`,
+            `\`\`\`sh`,
+            `npm install gcommands@pr-${context.payload.issue.number}`,
+            `\`\`\``
+					].join('\n')
+				});
+
+				await context.octokit.issues.createComment(replyMessage);
+      }
+    }
   })
 
   /*app.on('issue_comment.created', async(context) => {

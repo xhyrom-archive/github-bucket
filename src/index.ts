@@ -58,7 +58,8 @@ export default (app: Probot) => {
 					ref: 'next',
 					inputs: {
 						prNumber: context.payload.issue.number.toString(),
-						ref: fulldata.data.head.ref
+						ref: fulldata.data.head.ref,
+            repository: fulldata.data.head.repo.full_name
 					}
 				});
 

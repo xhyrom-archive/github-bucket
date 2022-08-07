@@ -5,7 +5,7 @@ import { Probot } from 'probot';
 const verified = new Set([56601352, 68066476]);
 
 export default (app: Probot) => {
-  app.on(['issues.opened'], (context) => {
+  /*app.on(['issues.opened'], (context) => {
     const user = context.payload.sender.login;
 
     const issueComment = context.issue({
@@ -17,9 +17,9 @@ export default (app: Probot) => {
     });
 
     context.octokit.issues.createComment(issueComment).catch(e => e);
-  });
+  });*/
 
-  app.on(['issues.closed', 'issues.reopened', 'pull_request.closed', 'pull_request.reopened'], async(context) => {
+  /*app.on(['issues.closed', 'issues.reopened', 'pull_request.closed', 'pull_request.reopened'], async(context) => {
     const issueComment = context.issue({
       body: context.payload.action === 'closed' ? 'I\'m locking the conversation so as not to create unnecessary controversy. Use `/unlock` to unlock' : 'I\'m unlocking the conversation. Use `/lock` to lock'
     });
@@ -31,7 +31,7 @@ export default (app: Probot) => {
       await context.octokit.issues.unlock(context.issue()).catch(e => e);
       context.octokit.issues.createComment(issueComment).catch(e => e);
     };
-  })
+  })*/
 
   app.on(['pull_request.opened','pull_request.reopened'], (context) => {
     context.octokit.pulls.requestReviewers(context.pullRequest({ reviewers: ['xHyroM'] })).catch(e => e);
